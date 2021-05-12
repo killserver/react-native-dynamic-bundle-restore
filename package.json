@@ -1,0 +1,32 @@
+{
+  "name": "react-native-dynamic-bundle-restore",
+  "version": "0.5.1",
+  "description": "Fork 'mauritsd' module. Control which bundle is loaded from the Javascript side of your React Native app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native"
+  ],
+  "author": {
+    "name": "Maurits Dijkstra",
+    "email": "mauritsdijkstra@gmail.com"
+  },
+  "homepage": "https://github.com/killserver/react-native-dynamic-bundle-restore",
+  "bugs": {
+    "url": "https://github.com/killserver/react-native-dynamic-bundle-restore/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/killserver/react-native-dynamic-bundle-restore.git"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "react-native": "*"
+  },
+  "nativePackage": true,
+  "devDependencies": {
+    "flow-bin": "^0.68.0"
+  }
+}
