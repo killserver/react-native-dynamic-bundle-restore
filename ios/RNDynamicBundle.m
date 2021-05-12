@@ -161,7 +161,7 @@ RCT_REMAP_METHOD(getActiveBundle,
     if (activeBundles == nil) {
         resolve([NSNull null]);
     } else {
-        resolve(activeBundle);
+        resolve(activeBundles);
     }
 }
 
