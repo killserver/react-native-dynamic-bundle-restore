@@ -203,10 +203,6 @@ replace:
 </p>
 </details>
 
-## To do's
-* Explanations of how to set it up on the native side. In the meanwhile have
-  a look at AppDelegate.m for iOS.
-
 
 ## Getting started
 

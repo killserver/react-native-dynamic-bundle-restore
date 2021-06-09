@@ -6,7 +6,7 @@
 // $FlowExpectedError: library code, so RN is not in node_modules
 import { NativeModules } from 'react-native';
 
-const { RNDynamicBundle } = NativeModules;
+const { RNDynamicBundleRestore } = NativeModules;
 
 /**
  * Set the active Javascript bundle to the bundle with the given bundle ID in
@@ -14,7 +14,7 @@ const { RNDynamicBundle } = NativeModules;
  * startup or invocation of `reloadBundle()`.
  */
 export function setActiveBundle(bundleId: string) {
-  RNDynamicBundle.setActiveBundle(bundleId);
+  RNDynamicBundleRestore.setActiveBundle(bundleId);
 }
 
 /**
@@ -23,14 +23,14 @@ export function setActiveBundle(bundleId: string) {
  * storage directory on Android, i.e. the directory returned by `getFilesDir()`.
  */
 export function registerBundle(bundleId: string, relativePath: string) {
-  RNDynamicBundle.registerBundle(bundleId, relativePath);
+  RNDynamicBundleRestore.registerBundle(bundleId, relativePath);
 }
 
 /**
  * Unregister a bundle from the bundle registry.
  */
 export function unregisterBundle(bundleId: string) {
-  RNDynamicBundle.unregisterBundle(bundleId);
+  RNDynamicBundleRestore.unregisterBundle(bundleId);
 }
 
 /**
@@ -38,7 +38,7 @@ export function unregisterBundle(bundleId: string) {
  * apply a new bundle that was set by `setActiveBundle()` immediately.
  */
 export function reloadBundle() {
-  RNDynamicBundle.reloadBundle();
+  RNDynamicBundleRestore.reloadBundle();
 }
 
 /**
@@ -47,7 +47,7 @@ export function reloadBundle() {
  * bundle locations encoded as a file URL.
  */
 export function getBundles(): Promise<{ [string]: string }> {
-  return RNDynamicBundle.getBundles();
+  return RNDynamicBundleRestore.getBundles();
 }
 
 /**
@@ -56,5 +56,5 @@ export function getBundles(): Promise<{ [string]: string }> {
  * is active this method will resolve to `null`.
  */
  export function getActiveBundle(): Promise<?string> {
-   return RNDynamicBundle.getActiveBundle();
+   return RNDynamicBundleRestore.getActiveBundle();
  }

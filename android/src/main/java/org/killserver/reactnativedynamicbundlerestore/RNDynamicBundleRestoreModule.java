@@ -1,5 +1,5 @@
 
-package org.killserver.reactnativedynamicbundle;
+package org.killserver.reactnativedynamicbundlerestore;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -19,11 +19,13 @@ import java.io.File;
 
 import android.os.Build;
 
-@ReactModule(name = "RNDynamicBundle")
-public class RNDynamicBundleModule extends ReactContextBaseJavaModule {
+@ReactModule(name = RNDynamicBundleRestoreModule.NAME)
+public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
   public interface OnReloadRequestedListener {
     void onReloadRequested();
   }
+
+  public static final String NAME = "RNDynamicBundleRestore";
 
   private final ReactApplicationContext reactContext;
   private final SharedPreferences bundlePrefs;
@@ -44,7 +46,7 @@ public class RNDynamicBundleModule extends ReactContextBaseJavaModule {
     return bundlePrefs.getString(activeBundles, null);
   }
 
-  public RNDynamicBundleModule(ReactApplicationContext reactContext) {
+  public RNDynamicBundleRestoreModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.reactContext = reactContext;
     this.bundlePrefs = reactContext.getSharedPreferences("_bundles", Context.MODE_PRIVATE);
@@ -53,7 +55,7 @@ public class RNDynamicBundleModule extends ReactContextBaseJavaModule {
 
   @Override
   public String getName() {
-    return "RNDynamicBundle";
+    return NAME;
   }
 
   @ReactMethod
