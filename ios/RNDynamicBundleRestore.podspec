@@ -1,15 +1,15 @@
 
 Pod::Spec.new do |s|
-  s.name           = "RNDynamicBundle"
+  s.name           = "RNDynamicBundleRestore"
   s.version        = "0.5.3"
-  s.summary        = "RNDynamicBundle"
+  s.summary        = "RNDynamicBundleRestore"
   s.description    = <<-DESC
-                  RNDynamicBundle
+                  RNDynamicBundleRestore
                    DESC
 
   s.homepage       = "https://github.com/killserver/react-native-dynamic-bundle-restore"
   s.license        = "MIT"
-  s.author         = { "author" => "mauritsdijkstra@gmail.com" }
+  s.author         = { "author" => "killeserver@gmail.com" }
   s.platform       = :ios, "7.0"
   s.source         = { :git => "https://github.com/killserver/react-native-dynamic-bundle-restore.git", :tag => "master" }
   s.source_files   = '*.{h,m}'

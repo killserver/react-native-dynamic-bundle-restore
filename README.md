@@ -20,7 +20,9 @@ yourself, but does give you complete freedom in how you implement your updater
 or A/B testing logic.
 
 ## Install for Android
-add to file "MainActivity.java":
+<details>
+  <summary>add to file "MainActivity.java":</summary>
+<p>
 
 ```
 import android.os.Bundle;
@@ -80,7 +82,12 @@ and after this line:
   }
 ```
 
-in "MainApplication.java" add:
+</p>
+</details>
+
+<details>
+  <summary>in "MainApplication.java" add:</summary>
+<p>
 
 ```
 import org.killserver.reactnativedynamicbundle.RNDynamicBundleModule;
@@ -104,6 +111,97 @@ new ReactNativeHost(this) {
           return RNDynamicBundleModule.launchResolveBundlePath(MainApplication.this);
         }
 ```
+
+</p>
+</details>
+
+## Install for IOS
+<details>
+  <summary>add to "AppDelegate.h":</summary>
+<p>
+
+  ```
+   #import  &lt;RNDynamicBundleRestore.h&gt;
+   
+   @class RCTRootView;
+  ```
+  
+  after:
+  ```
+   #import  &lt;UIKit/UIKit.h>
+  ```
+  
+  replace:
+  ```
+   @interface  AppDelegate : UIResponder &lt;UIApplicationDelegate, RCTBridgeDelegate>
+  ```
+  to:
+  ```
+  @interface  AppDelegate : UIResponder &lt;UIApplicationDelegate, RNDynamicBundleRestoreDelegate>
+  ```
+  
+  replace:
+  ```
+  @property (nonatomic, strong) UIWindow *window;
+  ```
+  to:
+  ```
+  @property (nonatomic, strong) UIWindow *window;
+  
+  @property (nonatomic, strong) NSDictionary *launchOptions;
+  
+  - (RCTRootView *)getRootViewForBundleURL:(NSURL *)bundleURL;
+  ```
+  
+</p>
+</details>
+<details>
+  <summary>add to "AppDelegate.m":</summary>
+<p>
+
+replace:
+  ```
+  - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+                                                   moduleName:@"Example"
+                                            initialProperties:nil];
+
+  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+  ```
+  to:
+  ```
+  - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+  /* We need to keep track of these because we may want to reinit the bridge later and
+   * will need them then.
+   */
+  self.launchOptions = launchOptions;
+
+  NSURL *jsCodeLocation;
+  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  [RNDynamicBundle setDefaultBundleURL:jsCodeLocation];
+
+  RCTRootView *rootView = [self getRootViewForBundleURL:[RNDynamicBundle resolveBundleURL]];
+  ```
+  
+  after:
+  ```
+  [self.window makeKeyAndVisible];
+  return YES;
+}
+  ```
+  add:
+  ```
+- (void)dynamicBundle:(RNDynamicBundle *)dynamicBundle requestsReloadForBundleURL:(NSURL *)bundleURL
+{
+  self.window.rootViewController.view = [self getRootViewForBundleURL:bundleURL];
+}
+  ```
+  
+</p>
+</details>
 
 ## To do's
 * Explanations of how to set it up on the native side. In the meanwhile have

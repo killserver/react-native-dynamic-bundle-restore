@@ -5,17 +5,17 @@
 #import <React/RCTBridgeModule.h>
 #endif
 
-@class RNDynamicBundle;
+@class RNDynamicBundleRestore;
 
-@protocol RNDynamicBundleDelegate <NSObject>
+@protocol RNDynamicBundleRestoreDelegate <NSObject>
 
-- (void)dynamicBundle:(RNDynamicBundle *)dynamicBundle requestsReloadForBundleURL:(NSURL *)bundleURL;
+- (void)dynamicBundle:(RNDynamicBundleRestore *)dynamicBundle requestsReloadForBundleURL:(NSURL *)bundleURL;
 
 @end
 
-@interface RNDynamicBundle : NSObject <RCTBridgeModule>
+@interface RNDynamicBundleRestore : NSObject <RCTBridgeModule>
 
-@property (weak) id<RNDynamicBundleDelegate> delegate;
+@property (weak) id<RNDynamicBundleRestoreDelegate> delegate;
 
 + (NSMutableDictionary *)loadRegistry;
 + (void)storeRegistry:(NSDictionary *)dict;
