@@ -159,17 +159,57 @@ new ReactNativeHost(this) {
 
 replace:
   ```
-  - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+                                                   moduleName:@"YOU_VERY_COOL_APPLICATION"
+                                            initialProperties:nil];
+
+  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+
+  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+  UIViewController *rootViewController = [UIViewController new];
+  rootViewController.view = rootView;
+  self.window.rootViewController = rootViewController;
+  [self.window makeKeyAndVisible];
+  return YES;
+}
   ```
   to:
   ```
-  - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+- (void)getRootViewForBundleURL {
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:self.launchOptions];
+  RNDynamicBundleRestore *dynamicBundle = [bridge moduleForClass:[RNDynamicBundleRestore class]];
+  dynamicBundle.delegate = self;
+  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+                                                   moduleName:@"YOU_VERY_COOL_APPLICATION"
+                                            initialProperties:nil];
+
+  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+
+  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+  UIViewController *rootViewController = [UIViewController new];
+  rootViewController.view = rootView;
+  self.window.rootViewController = rootViewController;
+  [self.window makeKeyAndVisible];
+}
+- (void)dynamicBundle:(RNDynamicBundleRestore *)dynamicBundle requestsReloadForBundleURL:(NSURL *)bundleURL
 {
-  /* We need to keep track of these because we may want to reinit the bridge later and
-   * will need them then.
-   */
+  [self getRootViewForBundleURL];
+}
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+#if DEBUG
+  InitializeFlipper(application);
+#endif
+  
   self.launchOptions = launchOptions;
+  
+  [self getRootViewForBundleURL];
+  return YES;
+}
   ```
   
   replace:
