@@ -17,6 +17,8 @@ import com.facebook.react.module.annotations.ReactModule;
 
 import java.io.File;
 
+import android.os.Build;
+
 @ReactModule(name = "RNDynamicBundle")
 public class RNDynamicBundleModule extends ReactContextBaseJavaModule {
   public interface OnReloadRequestedListener {
@@ -35,7 +37,7 @@ public class RNDynamicBundleModule extends ReactContextBaseJavaModule {
     SharedPreferences bundlePrefs = ctx.getSharedPreferences("_bundles", Context.MODE_PRIVATE);
     SharedPreferences extraPrefs = ctx.getSharedPreferences("_extra", Context.MODE_PRIVATE);
 
-    String activeBundles = extraPrefs.getString("activeBundles", null);
+    String activeBundles = extraPrefs.getString(Build.ID+"-activeBundles", null);
     if (activeBundles == null) {
       return null;
     }
@@ -57,7 +59,7 @@ public class RNDynamicBundleModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void setActiveBundles(String bundleId) {
     SharedPreferences.Editor editor = this.extraPrefs.edit();
-    editor.putString("activeBundles", bundleId);
+    editor.putString(Build.ID+"-activeBundles", bundleId);
     editor.commit();
   }
 
@@ -99,11 +101,11 @@ public class RNDynamicBundleModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void getActiveBundles(Promise promise) {
-    promise.resolve(extraPrefs.getString("activeBundles", null));
+    promise.resolve(extraPrefs.getString(Build.ID+"-activeBundles", null));
   }
 
   public String resolveBundlePath() {
-    String activeBundles = extraPrefs.getString("activeBundles", null);
+    String activeBundles = extraPrefs.getString(Build.ID+"-activeBundles", null);
     if (activeBundles == null) {
       return null;
     }

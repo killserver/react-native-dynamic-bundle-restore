@@ -12,6 +12,21 @@ static NSURL *_defaultBundleURL = nil;
     return dispatch_get_main_queue();
 }
 
+- (NSString *) getBuildId {
+#if TARGET_OS_TV
+    return @"unknown";
+#else
+    size_t bufferSize = 64;
+    NSMutableData *buffer = [[NSMutableData alloc] initWithLength:bufferSize];
+    int status = sysctlbyname("kern.osversion", buffer.mutableBytes, &bufferSize, NULL, 0);
+    if (status != 0) {
+        return @"unknown";
+    }
+    NSString* buildId = [[NSString alloc] initWithCString:buffer.mutableBytes encoding:NSUTF8StringEncoding];
+    return buildId;
+#endif
+}
+
 + (NSMutableDictionary *)loadRegistry
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -20,10 +35,11 @@ static NSURL *_defaultBundleURL = nil;
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if (![fileManager fileExistsAtPath:path]) {
+        NSString *buildId = [self getBuildId];
         NSDictionary *defaults = @{
                                    @"bundleList": [NSMutableDictionary dictionary],
-                                   @"activeBundles": @"",
                                    };
+        defaults[buildId+"-activeBundles"] = @"";
         return [defaults mutableCopy];
     } else {
         return [NSMutableDictionary dictionaryWithContentsOfFile:path];
@@ -42,7 +58,8 @@ static NSURL *_defaultBundleURL = nil;
 + (NSURL *)resolveBundleURL
 {
     NSMutableDictionary *dict = [RNDynamicBundle loadRegistry];
-    NSString *activeBundles = dict[@"activeBundles"];
+    NSString *buildId = [self getBuildId];
+    NSString *activeBundles = dict[buildId+"-activeBundles"];
     if ([activeBundles isEqualToString:@""]) {
         return _defaultBundleURL;
     }
@@ -87,7 +104,8 @@ static NSURL *_defaultBundleURL = nil;
 - (void)setActiveBundle:(NSString *)bundleId
 {
     NSMutableDictionary *dict = [RNDynamicBundle loadRegistry];
-    dict[@"activeBundles"] = bundleId == nil ? @"" : bundleId;
+    NSString *buildId = [self getBuildId];
+    dict[buildId+"-activeBundles"] = bundleId == nil ? @"" : bundleId;
 
     [RNDynamicBundle storeRegistry:dict];
 }
@@ -112,7 +130,8 @@ static NSURL *_defaultBundleURL = nil;
 - (NSString *)getActiveBundle
 {
     NSMutableDictionary *dict = [RNDynamicBundle loadRegistry];
-    NSString *activeBundles = dict[@"activeBundles"];
+    NSString *buildId = [self getBuildId];
+    NSString *activeBundles = dict[buildId+"-activeBundles"];
     if ([activeBundles isEqualToString:@""]) {
         return nil;
     }
