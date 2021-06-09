@@ -28,7 +28,7 @@ or A/B testing logic.
 import android.os.Bundle;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
-import org.killserver.reactnativedynamicbundle.RNDynamicBundleModule;
+import org.killserver.reactnativedynamicbundlerestore.RNDynamicBundleRestoreModule;
 ```
 
 replace:
@@ -40,13 +40,13 @@ public  class  MainActivity  extends  ReactActivity {
 on:
 
 ```
-public class MainActivity extends ReactActivity implements RNDynamicBundleModule.OnReloadRequestedListener {
+public class MainActivity extends ReactActivity implements RNDynamicBundleRestoreModule.OnReloadRequestedListener {
 ```
 
 and after this line:
 
 ```
-  private RNDynamicBundleModule module;
+  private RNDynamicBundleRestoreModule module;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(null);
@@ -55,7 +55,7 @@ and after this line:
       app.getReactNativeHost().getReactInstanceManager().addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
       @Override
       public void onReactContextInitialized(ReactContext context) {
-        MainActivity.this.module = context.getNativeModule(RNDynamicBundleModule.class);
+        MainActivity.this.module = context.getNativeModule(RNDynamicBundleRestoreModule.class);
         module.setListener(MainActivity.this);
       }
     });
@@ -90,8 +90,8 @@ and after this line:
 <p>
 
 ```
-import org.killserver.reactnativedynamicbundle.RNDynamicBundleModule;
-import org.killserver.reactnativedynamicbundle.RNDynamicBundlePackage;
+import org.killserver.reactnativedynamicbundlerestore.RNDynamicBundleRestoreModule;
+import org.killserver.reactnativedynamicbundlerestore.RNDynamicBundleRestorePackage;
 import javax.annotation.Nullable;
 ```
 
@@ -108,7 +108,7 @@ new ReactNativeHost(this) {
         @Nullable
         @Override
         protected String getJSBundleFile() {
-          return RNDynamicBundleModule.launchResolveBundlePath(MainApplication.this);
+          return RNDynamicBundleRestoreModule.launchResolveBundlePath(MainApplication.this);
         }
 ```
 
@@ -117,15 +117,15 @@ new ReactNativeHost(this) {
 
 ## Install for IOS
 <details>
-  <summary>add to "AppDelegate.h":</summary>
+  <summary>AppDelegate.h:</summary>
 <p>
 
+  add:
   ```
    #import  &lt;RNDynamicBundleRestore.h&gt;
    
    @class RCTRootView;
   ```
-  
   after:
   ```
    #import  &lt;UIKit/UIKit.h>
@@ -149,26 +149,18 @@ new ReactNativeHost(this) {
   @property (nonatomic, strong) UIWindow *window;
   
   @property (nonatomic, strong) NSDictionary *launchOptions;
-  
-  - (RCTRootView *)getRootViewForBundleURL:(NSURL *)bundleURL;
   ```
   
 </p>
 </details>
 <details>
-  <summary>add to "AppDelegate.m":</summary>
+  <summary>AppDelegate.m:</summary>
 <p>
 
 replace:
   ```
   - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                                   moduleName:@"Example"
-                                            initialProperties:nil];
-
-  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
   ```
   to:
   ```
@@ -178,26 +170,27 @@ replace:
    * will need them then.
    */
   self.launchOptions = launchOptions;
-
-  NSURL *jsCodeLocation;
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-  [RNDynamicBundle setDefaultBundleURL:jsCodeLocation];
-
-  RCTRootView *rootView = [self getRootViewForBundleURL:[RNDynamicBundle resolveBundleURL]];
   ```
   
-  after:
+  replace:
   ```
-  [self.window makeKeyAndVisible];
-  return YES;
-}
-  ```
-  add:
-  ```
-- (void)dynamicBundle:(RNDynamicBundle *)dynamicBundle requestsReloadForBundleURL:(NSURL *)bundleURL
+  - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
-  self.window.rootViewController.view = [self getRootViewForBundleURL:bundleURL];
-}
+#if DEBUG
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+#else
+  ```
+  to:
+  ```
+  - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+{
+#if DEBUG
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+#else
+  NSURL *bundle = [RNDynamicBundleRestore resolveBundleURL];
+  if(bundle!=nil) {
+    return bundle;
+  }
   ```
   
 </p>
@@ -223,14 +216,14 @@ or
 #### iOS
 
 1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
-2. Go to `node_modules` ➜ `react-native-dynamic-bundle-restore` and add `RNDynamicBundle.xcodeproj`
-3. In XCode, in the project navigator, select your project. Add `libRNDynamicBundle.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
+2. Go to `node_modules` ➜ `react-native-dynamic-bundle-restore` and add `RNDynamicBundleRestore.xcodeproj`
+3. In XCode, in the project navigator, select your project. Add `libRNDynamicBundleRestore.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
 4. Run your project (`Cmd+R`)<
 
 #### Android
 
 1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-  - Add `import org.killserver.reactnativedynamicbundle.RNDynamicBundlePackage;` to the imports at the top of the file
+  - Add `import org.killserver.reactnativedynamicbundlerestore.RNDynamicBundleRestorePackage;` to the imports at the top of the file
   - Add `new RNDynamicBundlePackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
 ```
