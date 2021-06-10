@@ -59,7 +59,7 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void setActiveBundles(String bundleId) {
+  public void setActiveBundle(String bundleId) {
     SharedPreferences.Editor editor = this.extraPrefs.edit();
     editor.putString(Build.ID+"-activeBundles", bundleId);
     editor.commit();
@@ -102,7 +102,7 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getActiveBundles(Promise promise) {
+  public void getActiveBundle(Promise promise) {
     promise.resolve(extraPrefs.getString(Build.ID+"-activeBundles", null));
   }
 
