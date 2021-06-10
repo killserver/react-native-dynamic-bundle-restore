@@ -17,7 +17,9 @@ import com.facebook.react.module.annotations.ReactModule;
 
 import java.io.File;
 
-import android.os.Build;
+import android.content.pm.PackageInfo;
+import android.content.Intent;
+
 
 @ReactModule(name = RNDynamicBundleRestoreModule.NAME)
 public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
@@ -32,6 +34,16 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
   private final SharedPreferences extraPrefs;
   private OnReloadRequestedListener listener;
 
+  private static String getNameActiveBundle() {
+    String buildNumber;
+    try {
+      buildNumber = Integer.toString(getPackageInfo().versionName);
+    } catch (Exception e) {
+      buildNumber = "unknown";
+    }
+    return buildNumber+"-activeBundles";
+  }
+
   /* Sadly need this to avoid a circular dependency in the ReactNativeHost
    * TODO: Refactor to avoid code duplication.
    */
@@ -39,7 +51,7 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
     SharedPreferences bundlePrefs = ctx.getSharedPreferences("_bundles", Context.MODE_PRIVATE);
     SharedPreferences extraPrefs = ctx.getSharedPreferences("_extra", Context.MODE_PRIVATE);
 
-    String activeBundles = extraPrefs.getString(Build.ID+"-activeBundles", null);
+    String activeBundles = extraPrefs.getString(this.getNameActiveBundle(), null);
     if (activeBundles == null) {
       return null;
     }
@@ -61,7 +73,7 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void setActiveBundle(String bundleId) {
     SharedPreferences.Editor editor = this.extraPrefs.edit();
-    editor.putString(Build.ID+"-activeBundles", bundleId);
+    editor.putString(this.getNameActiveBundle(), bundleId);
     editor.commit();
   }
 
@@ -103,11 +115,11 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void getActiveBundle(Promise promise) {
-    promise.resolve(extraPrefs.getString(Build.ID+"-activeBundles", null));
+    promise.resolve(extraPrefs.getString(this.getNameActiveBundle(), null));
   }
 
   public String resolveBundlePath() {
-    String activeBundles = extraPrefs.getString(Build.ID+"-activeBundles", null);
+    String activeBundles = extraPrefs.getString(this.getNameActiveBundle(), null);
     if (activeBundles == null) {
       return null;
     }
