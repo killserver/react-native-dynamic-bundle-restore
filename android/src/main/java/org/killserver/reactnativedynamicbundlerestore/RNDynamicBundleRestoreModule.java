@@ -18,7 +18,7 @@ import com.facebook.react.module.annotations.ReactModule;
 import java.io.File;
 
 import android.content.pm.PackageInfo;
-import android.content.Intent;
+import android.content.pm.PackageManager;
 
 
 @ReactModule(name = RNDynamicBundleRestoreModule.NAME)
@@ -30,15 +30,19 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
   public static final String NAME = "RNDynamicBundleRestore";
 
   private final ReactApplicationContext reactContext;
+  private static ReactApplicationContext reactStaticContext;
   private final SharedPreferences bundlePrefs;
   private final SharedPreferences extraPrefs;
   private OnReloadRequestedListener listener;
 
+  private static PackageInfo getPackageInfo() throws Exception {
+    return reactStaticContext.getPackageManager().getPackageInfo(reactStaticContext.getPackageName(), 0);
+  }
+
   private static String getNameActiveBundle() {
-    final PackageManager packageManager = this.reactContext.getPackageManager();
     String buildNumber;
     try {
-      buildNumber = Integer.toString(packageManager.getPackageInfo().versionName);
+      buildNumber = getPackageInfo().versionName;
     } catch (Exception e) {
       buildNumber = "unknown";
     }
@@ -52,7 +56,7 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
     SharedPreferences bundlePrefs = ctx.getSharedPreferences("_bundles", Context.MODE_PRIVATE);
     SharedPreferences extraPrefs = ctx.getSharedPreferences("_extra", Context.MODE_PRIVATE);
 
-    String activeBundles = extraPrefs.getString(this.getNameActiveBundle(), null);
+    String activeBundles = extraPrefs.getString(getNameActiveBundle(), null);
     if (activeBundles == null) {
       return null;
     }
@@ -62,6 +66,7 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
   public RNDynamicBundleRestoreModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.reactContext = reactContext;
+    reactStaticContext = reactContext;
     this.bundlePrefs = reactContext.getSharedPreferences("_bundles", Context.MODE_PRIVATE);
     this.extraPrefs = reactContext.getSharedPreferences("_extra", Context.MODE_PRIVATE);
   }
@@ -74,7 +79,7 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void setActiveBundle(String bundleId) {
     SharedPreferences.Editor editor = this.extraPrefs.edit();
-    editor.putString(this.getNameActiveBundle(), bundleId);
+    editor.putString(getNameActiveBundle(), bundleId);
     editor.commit();
   }
 
@@ -116,11 +121,11 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void getActiveBundle(Promise promise) {
-    promise.resolve(extraPrefs.getString(this.getNameActiveBundle(), null));
+    promise.resolve(extraPrefs.getString(getNameActiveBundle(), null));
   }
 
   public String resolveBundlePath() {
-    String activeBundles = extraPrefs.getString(this.getNameActiveBundle(), null);
+    String activeBundles = extraPrefs.getString(getNameActiveBundle(), null);
     if (activeBundles == null) {
       return null;
     }
