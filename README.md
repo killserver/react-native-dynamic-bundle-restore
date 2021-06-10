@@ -19,12 +19,14 @@ requires you to implement the logic to download and keep track of the bundles
 yourself, but does give you complete freedom in how you implement your updater
 or A/B testing logic.
 
+### work with reanimated 2
+
 ## Install for Android
 <details>
   <summary>add to file "MainActivity.java":</summary>
 <p>
 
-```
+```java
 import android.os.Bundle;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
@@ -33,19 +35,19 @@ import org.killserver.reactnativedynamicbundlerestore.RNDynamicBundleRestoreModu
 
 replace:
 
-```
+```java
 public  class  MainActivity  extends  ReactActivity {
 ```
 
 on:
 
-```
+```java
 public class MainActivity extends ReactActivity implements RNDynamicBundleRestoreModule.OnReloadRequestedListener {
 ```
 
 and after this line:
 
-```
+```java
   private RNDynamicBundleRestoreModule module;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +91,7 @@ and after this line:
   <summary>in "MainApplication.java" add:</summary>
 <p>
 
-```
+```java
 import org.killserver.reactnativedynamicbundlerestore.RNDynamicBundleRestoreModule;
 import org.killserver.reactnativedynamicbundlerestore.RNDynamicBundleRestorePackage;
 import javax.annotation.Nullable;
@@ -97,13 +99,13 @@ import javax.annotation.Nullable;
 
 and replace:
 
-```
+```java
 new  ReactNativeHost(this) {
 ```
 
 on:
 
-```
+```java
 new ReactNativeHost(this) {
         @Nullable
         @Override
@@ -121,31 +123,31 @@ new ReactNativeHost(this) {
 <p>
 
   add:
-  ```
-   #import  &lt;RNDynamicBundleRestore.h&gt;
+  ```objective-c
+   #import  <RNDynamicBundleRestore.h>
    
    @class RCTRootView;
   ```
   after:
-  ```
-   #import  &lt;UIKit/UIKit.h>
+  ```objective-c
+   #import  <UIKit/UIKit.h>
   ```
   
   replace:
-  ```
-   @interface  AppDelegate : UIResponder &lt;UIApplicationDelegate, RCTBridgeDelegate>
+  ```objective-c
+   @interface  AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate>
   ```
   to:
-  ```
-  @interface  AppDelegate : UIResponder &lt;UIApplicationDelegate, RNDynamicBundleRestoreDelegate>
+  ```objective-c
+  @interface  AppDelegate : UIResponder <UIApplicationDelegate, RNDynamicBundleRestoreDelegate>
   ```
   
   replace:
-  ```
+  ```objective-c
   @property (nonatomic, strong) UIWindow *window;
   ```
   to:
-  ```
+  ```objective-c
   @property (nonatomic, strong) UIWindow *window;
   
   @property (nonatomic, strong) NSDictionary *launchOptions;
@@ -158,7 +160,7 @@ new ReactNativeHost(this) {
 <p>
 
 replace:
-  ```
+  ```objective-c
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
@@ -177,7 +179,7 @@ replace:
 }
   ```
   to:
-  ```
+  ```objective-c
 - (void)getRootViewForBundleURL {
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:self.launchOptions];
   RNDynamicBundleRestore *dynamicBundle = [bridge moduleForClass:[RNDynamicBundleRestore class]];
@@ -213,7 +215,7 @@ replace:
   ```
   
   replace:
-  ```
+  ```objective-c
   - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
@@ -221,7 +223,7 @@ replace:
 #else
   ```
   to:
-  ```
+  ```objective-c
   - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
