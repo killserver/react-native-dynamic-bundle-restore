@@ -35,9 +35,10 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
   private OnReloadRequestedListener listener;
 
   private static String getNameActiveBundle() {
+    final PackageManager packageManager = this.reactContext.getPackageManager();
     String buildNumber;
     try {
-      buildNumber = Integer.toString(getPackageInfo().versionName);
+      buildNumber = Integer.toString(packageManager.getPackageInfo().versionName);
     } catch (Exception e) {
       buildNumber = "unknown";
     }
