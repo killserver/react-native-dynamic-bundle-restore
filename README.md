@@ -310,4 +310,9 @@ unregisterBundle('a_b_test');
  * recommended to sync data and let actions complete before calling this.
  */
 reloadBundle();
+
+/*
+ * clear all store about bundles(need for moving between versions)
+ */
+resetAllBundlesBetweenVersion();
 ```

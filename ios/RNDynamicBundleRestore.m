@@ -24,6 +24,19 @@ static NSURL *_defaultBundleURL = nil;
     return name;
 }
 
++ (NSMutableDictionary *)createEmptyRegistry {
+
+    NSString *name = [RNDynamicBundleRestore getNameBundle];
+//        NSDictionary *defaults = @{
+//            @"bundleList": [NSMutableDictionary dictionary]
+//        };
+    NSMutableDictionary *defaults = [[NSMutableDictionary alloc] init];
+    defaults[nameBundleList] = [NSMutableDictionary dictionary];
+    defaults[name] = @"";
+    //[defaults setValue:@"" forUndefinedKey:name];
+    return [defaults mutableCopy];
+}
+
 + (NSMutableDictionary *)loadRegistry
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -32,18 +45,16 @@ static NSURL *_defaultBundleURL = nil;
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if (![fileManager fileExistsAtPath:path]) {
-        NSString *name = [RNDynamicBundleRestore getNameBundle];
-//        NSDictionary *defaults = @{
-//            @"bundleList": [NSMutableDictionary dictionary]
-//        };
-        NSMutableDictionary *defaults = [[NSMutableDictionary alloc] init];
-        defaults[nameBundleList] = [NSMutableDictionary dictionary];
-        defaults[name] = @"";
-        //[defaults setValue:@"" forUndefinedKey:name];
-        return [defaults mutableCopy];
+        return [RNDynamicBundleRestore createEmptyRegistry];
     } else {
         return [NSMutableDictionary dictionaryWithContentsOfFile:path];
     }
+}
+
+- (bool)resetAllBundlesBetweenVersion {
+    NSMutableDictionary *dict = [RNDynamicBundleRestore createEmptyRegistry];
+    [RNDynamicBundleRestore storeRegistry:dict];
+    return true;
 }
 
 + (void)storeRegistry:(NSDictionary *)dict
@@ -163,6 +174,14 @@ RCT_REMAP_METHOD(unregisterBundle, exportedUnregisterBundle:(NSString *)bundleId
 RCT_REMAP_METHOD(setActiveBundle, exportedSetActiveBundle:(NSString *)bundleId)
 {
     [self setActiveBundle:bundleId];
+}
+
+RCT_REMAP_METHOD(resetAllBundlesBetweenVersion,
+                 exportedresetAllBundlesBetweenVersionWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
+{
+    bool completed = [self resetAllBundlesBetweenVersion];
+    resolve(@(completed));
 }
 
 RCT_REMAP_METHOD(getBundles,

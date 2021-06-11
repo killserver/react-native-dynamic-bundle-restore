@@ -27,6 +27,7 @@
 - (void)unregisterBundle:(NSString *)bundleId;
 - (void)setActiveBundle:(NSString *)bundleId;
 - (NSDictionary *)getBundles;
+- (bool)resetAllBundlesBetweenVersion;
 - (NSString *)getActiveBundle;
 
 @end

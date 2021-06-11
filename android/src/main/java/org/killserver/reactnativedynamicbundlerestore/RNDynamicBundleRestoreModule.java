@@ -84,6 +84,13 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void resetAllBundlesBetweenVersion(Promise promise) {
+    this.extraPrefs.edit().clear().commit();
+    this.bundlePrefs.edit().clear().commit();
+    promise.resolve(true);
+  }
+
+  @ReactMethod
   public void registerBundle(String bundleId, String relativePath) {
     File absolutePath = new File(reactContext.getFilesDir(), relativePath);
 
