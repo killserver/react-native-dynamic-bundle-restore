@@ -58,3 +58,11 @@ export function getBundles(): Promise<{ [string]: string }> {
  export function getActiveBundle(): Promise<?string> {
    return RNDynamicBundleRestore.getActiveBundle();
  }
+
+
+ /*
+  * clear all store about bundles(need for moving between versions)
+  */
+ export function resetAllBundlesBetweenVersion(): Promise<?boolean> {
+   return RNDynamicBundleRestore.resetAllBundlesBetweenVersion();
+ }

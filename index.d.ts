@@ -30,6 +30,10 @@ declare module 'react-native-dynamic-bundle-restore' {
    * is active this method will resolve to `null`.
    */
   export function getActiveBundle(): Promise<string>
+
+  /*
+   * clear all store about bundles(need for moving between versions)
+   */
   export function resetAllBundlesBetweenVersion(): Promise<boolean>
 
   /**
