@@ -22,6 +22,17 @@ or A/B testing logic.
 ### work with reanimated 2
 
 ## Install for Android
+
+for version up to: 0.7.1
+replace in file "MainApplication.java":
+```
+return RNDynamicBundleRestoreModule.launchResolveBundlePath(MainApplication.this);
+```
+to:
+```java
+return RNDynamicBundleRestoreModule.launchResolveBundlePath(MainApplication.this, BuildConfig.VERSION_NAME);
+```
+
 <details>
   <summary>add to file "MainActivity.java":</summary>
 <p>
@@ -110,7 +121,7 @@ new ReactNativeHost(this) {
         @Nullable
         @Override
         protected String getJSBundleFile() {
-          return RNDynamicBundleRestoreModule.launchResolveBundlePath(MainApplication.this);
+          return RNDynamicBundleRestoreModule.launchResolveBundlePath(MainApplication.this, BuildConfig.VERSION_NAME);
         }
 ```
 

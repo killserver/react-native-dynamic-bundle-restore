@@ -19,6 +19,8 @@ import java.io.File;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.util.Log;
+import android.app.Application;
 
 
 @ReactModule(name = RNDynamicBundleRestoreModule.NAME)
@@ -44,19 +46,24 @@ public class RNDynamicBundleRestoreModule extends ReactContextBaseJavaModule {
     try {
       buildNumber = getPackageInfo().versionName;
     } catch (Exception e) {
+      Log.e(NAME, "dynBundles_Exception: "+e.toString());
       buildNumber = "unknown";
     }
+
     return buildNumber+"-activeBundles";
   }
 
   /* Sadly need this to avoid a circular dependency in the ReactNativeHost
    * TODO: Refactor to avoid code duplication.
    */
-  public static String launchResolveBundlePath(Context ctx) {
+  public static String launchResolveBundlePath(Context ctx, String partVersion) {
+    String buildNumber;
     SharedPreferences bundlePrefs = ctx.getSharedPreferences("_bundles", Context.MODE_PRIVATE);
     SharedPreferences extraPrefs = ctx.getSharedPreferences("_extra", Context.MODE_PRIVATE);
 
-    String activeBundles = extraPrefs.getString(getNameActiveBundle(), null);
+    String activeBundles = extraPrefs.getString(partVersion+"-activeBundles", null);
+    Log.d(NAME, "dynBundles_activeBundles: " + activeBundles);
+    Log.d(NAME, "dynBundles_getNameActiveBundle: " + partVersion+"-activeBundles");
     if (activeBundles == null) {
       return null;
     }
