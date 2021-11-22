@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name           = "RNDynamicBundleRestore"
-  s.version        = "0.5.3"
+  s.version        = "0.7.4"
   s.summary        = "RNDynamicBundleRestore"
   s.description    = <<-DESC
                   RNDynamicBundleRestore
